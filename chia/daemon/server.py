@@ -57,7 +57,7 @@ except ImportError:
 
 log = logging.getLogger(__name__)
 
-service_plotter = "chia_plotter"
+service_plotter = "spare_plotter"
 
 
 async def fetch(url: str):
@@ -90,17 +90,17 @@ class PlotEvent(str, Enum):
 # determine if application is a script file or frozen exe
 if getattr(sys, "frozen", False):
     name_map = {
-        "chia": "chia",
-        "chia_wallet": "start_wallet",
-        "chia_full_node": "start_full_node",
-        "chia_harvester": "start_harvester",
-        "chia_farmer": "start_farmer",
-        "chia_introducer": "start_introducer",
-        "chia_timelord": "start_timelord",
-        "chia_timelord_launcher": "timelord_launcher",
-        "chia_full_node_simulator": "start_simulator",
-        "chia_seeder": "start_seeder",
-        "chia_crawler": "start_crawler",
+        "spare": "spare",
+        "spare_wallet": "start_wallet",
+        "spare_full_node": "start_full_node",
+        "spare_harvester": "start_harvester",
+        "spare_farmer": "start_farmer",
+        "spare_introducer": "start_introducer",
+        "spare_timelord": "start_timelord",
+        "spare_timelord_launcher": "timelord_launcher",
+        "spare_full_node_simulator": "start_simulator",
+        "spare_seeder": "start_seeder",
+        "spare_crawler": "start_crawler",
     }
 
     def executable_for_service(service_name: str) -> str:
@@ -397,7 +397,7 @@ class WebSocketServer:
                     else:
                         self.log.debug("Skipping legacy key migration (previously attempted).")
                 except Exception:
-                    self.log.exception("Failed to migrate keys silently. Run `chia keys migrate` manually.")
+                    self.log.exception("Failed to migrate keys silently. Run `spare keys migrate` manually.")
 
                 # Inform the GUI of keyring status changes
                 self.keyring_status_changed(await self.keyring_status(), "wallet_ui")
@@ -824,7 +824,7 @@ class WebSocketServer:
 
     def _build_plotting_command_args(self, request: Any, ignoreCount: bool, index: int) -> List[str]:
         plotter: str = request.get("plotter", "chiapos")
-        command_args: List[str] = ["chia", "plotters", plotter]
+        command_args: List[str] = ["spare", "plotters", plotter]
 
         command_args.extend(self._common_plotting_command_args(request, ignoreCount))
 
@@ -1129,7 +1129,7 @@ class WebSocketServer:
         if self.websocket_runner is not None:
             await self.websocket_runner.cleanup()
         self.shutdown_event.set()
-        log.info("chia daemon exiting")
+        log.info("spare daemon exiting")
 
     async def register_service(self, websocket: WebSocketResponse, request: Dict[str, Any]) -> Dict[str, Any]:
         self.log.info(f"Register service {request}")
@@ -1181,8 +1181,8 @@ def plotter_log_path(root_path: Path, id: str):
 
 
 def launch_plotter(root_path: Path, service_name: str, service_array: List[str], id: str):
-    # we need to pass on the possibly altered CHIA_ROOT
-    os.environ["CHIA_ROOT"] = str(root_path)
+    # we need to pass on the possibly altered SPARE_ROOT
+    os.environ["SPARE_ROOT"] = str(root_path)
     service_executable = executable_for_service(service_array[0])
 
     # Swap service name with name of executable
@@ -1231,21 +1231,21 @@ def launch_service(root_path: Path, service_command) -> Tuple[subprocess.Popen, 
     """
     Launch a child process.
     """
-    # set up CHIA_ROOT
+    # set up SPARE_ROOT
     # invoke correct script
     # save away PID
 
-    # we need to pass on the possibly altered CHIA_ROOT
-    os.environ["CHIA_ROOT"] = str(root_path)
+    # we need to pass on the possibly altered SPARE_ROOT
+    os.environ["SPARE_ROOT"] = str(root_path)
 
-    log.debug(f"Launching service with CHIA_ROOT: {os.environ['CHIA_ROOT']}")
+    log.debug(f"Launching service with SPARE_ROOT: {os.environ['SPARE_ROOT']}")
 
     # Insert proper e
     service_array = service_command.split()
     service_executable = executable_for_service(service_array[0])
     service_array[0] = service_executable
 
-    if service_command == "chia_full_node_simulator":
+    if service_command == "spare_full_node_simulator":
         # Set the -D/--connect_to_daemon flag to signify that the child should connect
         # to the daemon to access the keychain
         service_array.append("-D")
@@ -1354,7 +1354,7 @@ async def async_run_daemon(root_path: Path, wait_for_unlock: bool = False) -> in
     # since it might be necessary to wait for the GUI to unlock the keyring first.
     chia_init(root_path, should_check_keys=(not wait_for_unlock))
     config = load_config(root_path, "config.yaml")
-    setproctitle("chia_daemon")
+    setproctitle("spare_daemon")
     initialize_logging("daemon", config["logging"], root_path)
     lockfile = singleton(daemon_launch_lock_path(root_path))
     crt_path = root_path / config["daemon_ssl"]["private_crt"]

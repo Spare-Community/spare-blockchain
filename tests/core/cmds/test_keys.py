@@ -117,7 +117,7 @@ class TestKeysCommands:
     def test_generate_with_new_config(self, tmp_path, empty_keyring):
         """
         Generate a new config and a new key. Verify that the config has
-        the correct xch_target_address entries.
+        the correct spare_target_address entries.
         """
 
         keychain = empty_keyring
@@ -141,19 +141,19 @@ class TestKeysCommands:
         assert result.exit_code == 0
         assert len(keychain.get_all_private_keys()) == 1
 
-        # Verify that the config has the correct xch_target_address entries
-        address_matches = re.findall(r"xch1[^\n]+", result.output)
+        # Verify that the config has the correct spare_target_address entries
+        address_matches = re.findall(r"spare1[^\n]+", result.output)
         assert len(address_matches) > 1
         address = address_matches[0]
 
         config: Dict = load_config(tmp_path, "config.yaml")
-        assert config["farmer"]["xch_target_address"] == address
-        assert config["pool"]["xch_target_address"] == address
+        assert config["farmer"]["spare_target_address"] == address
+        assert config["pool"]["spare_target_address"] == address
 
     def test_generate_with_existing_config(self, tmp_path, empty_keyring):
         """
         Generate a new key using an existing config. Verify that the config has
-        the original xch_target_address entries.
+        the original spare_target_address entries.
         """
 
         keychain = empty_keyring
@@ -177,14 +177,14 @@ class TestKeysCommands:
         assert generate_result.exit_code == 0
         assert len(keychain.get_all_private_keys()) == 1
 
-        # Verify that the config has the correct xch_target_address entries
-        address_matches = re.findall(r"xch1[^\n]+", generate_result.output)
+        # Verify that the config has the correct spare_target_address entries
+        address_matches = re.findall(r"spare1[^\n]+", generate_result.output)
         assert len(address_matches) > 1
         address = address_matches[0]
 
         existing_config: Dict = load_config(tmp_path, "config.yaml")
-        assert existing_config["farmer"]["xch_target_address"] == address
-        assert existing_config["pool"]["xch_target_address"] == address
+        assert existing_config["farmer"]["spare_target_address"] == address
+        assert existing_config["pool"]["spare_target_address"] == address
 
         # Generate the second key
         runner = CliRunner()
@@ -195,14 +195,14 @@ class TestKeysCommands:
         assert result.exit_code == 0
         assert len(keychain.get_all_private_keys()) == 2
 
-        # Verify that the config's xch_target_address entries have not changed
+        # Verify that the config's spare_target_address entries have not changed
         config: Dict = load_config(tmp_path, "config.yaml")
-        assert config["farmer"]["xch_target_address"] == existing_config["farmer"]["xch_target_address"]
-        assert config["pool"]["xch_target_address"] == existing_config["pool"]["xch_target_address"]
+        assert config["farmer"]["spare_target_address"] == existing_config["farmer"]["spare_target_address"]
+        assert config["pool"]["spare_target_address"] == existing_config["pool"]["spare_target_address"]
 
     def test_show(self, keyring_with_one_key):
         """
-        Test that the `chia keys show` command shows the correct key.
+        Test that the `spare keys show` command shows the correct key.
         """
 
         keychain = keyring_with_one_key
@@ -217,7 +217,7 @@ class TestKeysCommands:
 
     def test_show_mnemonic(self, keyring_with_one_key):
         """
-        Test that the `chia keys show --show-mnemonic-seed` command shows the key's mnemonic seed.
+        Test that the `spare keys show --show-mnemonic-seed` command shows the key's mnemonic seed.
         """
 
         keychain = keyring_with_one_key
@@ -367,7 +367,7 @@ class TestKeysCommands:
 
     def test_generate_and_print(self):
         """
-        Test the `chia keys generate_and_print` command.
+        Test the `spare keys generate_and_print` command.
         """
 
         runner = CliRunner()
@@ -378,7 +378,7 @@ class TestKeysCommands:
 
     def test_sign(self, keyring_with_one_key):
         """
-        Test the `chia keys sign` command.
+        Test the `spare keys sign` command.
         """
 
         message: str = "hello world"
@@ -411,7 +411,7 @@ class TestKeysCommands:
 
     def test_sign_non_observer(self, keyring_with_one_key):
         """
-        Test the `chia keys sign` command with a non-observer key.
+        Test the `spare keys sign` command with a non-observer key.
         """
 
         message: str = "hello world"
@@ -483,7 +483,7 @@ class TestKeysCommands:
 
     def test_verify(self):
         """
-        Test the `chia keys verify` command.
+        Test the `spare keys verify` command.
         """
 
         message: str = "hello world"
@@ -504,7 +504,7 @@ class TestKeysCommands:
 
     def test_derive_search(self, tmp_path, keyring_with_one_key):
         """
-        Test the `chia keys derive search` command, searching a public and private key
+        Test the `spare keys derive search` command, searching a public and private key
         """
 
         keychain = keyring_with_one_key
@@ -562,7 +562,7 @@ class TestKeysCommands:
 
     def test_derive_search_wallet_address(self, tmp_path, keyring_with_one_key):
         """
-        Test the `chia keys derive search` command, searching for a wallet address
+        Test the `spare keys derive search` command, searching for a wallet address
         """
 
         keychain = keyring_with_one_key
@@ -593,7 +593,7 @@ class TestKeysCommands:
                 "40",
                 "--search-type",
                 "address",
-                "xch1mnr0ygu7lvmk3nfgzmncfk39fwu0dv933yrcv97nd6pmrt7fzmhs8taffd",
+                "spare1mnr0ygu7lvmk3nfgzmncfk39fwu0dv933yrcv97nd6pmrt7fzmhs8taffd",
             ],
         )
 
@@ -602,7 +602,7 @@ class TestKeysCommands:
             result.output.find(
                 (
                     "Found wallet address: "
-                    "xch1mnr0ygu7lvmk3nfgzmncfk39fwu0dv933yrcv97nd6pmrt7fzmhs8taffd (HD path: m/12381/8444/2/30)"
+                    "spare1mnr0ygu7lvmk3nfgzmncfk39fwu0dv933yrcv97nd6pmrt7fzmhs8taffd (HD path: m/12381/8444/2/30)"
                 )
             )
             != -1
@@ -610,7 +610,7 @@ class TestKeysCommands:
 
     def test_derive_search_failure(self, tmp_path, keyring_with_one_key):
         """
-        Test the `chia keys derive search` command with a failing search.
+        Test the `spare keys derive search` command with a failing search.
         """
 
         keychain = keyring_with_one_key
@@ -649,7 +649,7 @@ class TestKeysCommands:
 
     def test_derive_search_hd_path(self, tmp_path, empty_keyring, mnemonic_seed_file):
         """
-        Test the `chia keys derive search` command, searching under a provided HD path.
+        Test the `spare keys derive search` command, searching under a provided HD path.
         """
 
         keychain = empty_keyring
@@ -699,7 +699,7 @@ class TestKeysCommands:
 
     def test_derive_wallet_address(self, tmp_path, keyring_with_one_key):
         """
-        Test the `chia keys derive wallet-address` command, generating a couple of wallet addresses.
+        Test the `spare keys derive wallet-address` command, generating a couple of wallet addresses.
         """
 
         keychain = keyring_with_one_key
@@ -740,7 +740,7 @@ class TestKeysCommands:
             result.output.find(
                 (
                     "Wallet address 50 (m/12381n/8444n/2n/50n): "
-                    "xch1jp2u7an0mn9hdlw2x05nmje49gwgzmqyvh0qmh6008yksetuvkfs6wrfdq"
+                    "spare1jp2u7an0mn9hdlw2x05nmje49gwgzmqyvh0qmh6008yksetuvkfs6wrfdq"
                 )
             )
             != -1
@@ -749,7 +749,7 @@ class TestKeysCommands:
             result.output.find(
                 (
                     "Wallet address 51 (m/12381n/8444n/2n/51n): "
-                    "xch1006n6l3x5e8exar8mlj004znjl5pq0tq73h76kz0yergswnjzn8sumvfmt"
+                    "spare1006n6l3x5e8exar8mlj004znjl5pq0tq73h76kz0yergswnjzn8sumvfmt"
                 )
             )
             != -1
@@ -757,7 +757,7 @@ class TestKeysCommands:
 
     def test_derive_child_keys(self, tmp_path, keyring_with_one_key):
         """
-        Test the `chia keys derive child-keys` command, generating a couple of derived keys.
+        Test the `spare keys derive child-keys` command, generating a couple of derived keys.
         """
 
         keychain = keyring_with_one_key
@@ -835,7 +835,7 @@ class TestKeysCommands:
 
     def test_migration_not_needed(self, tmp_path, setup_keyringwrapper, monkeypatch):
         """
-        Test the `chia keys migrate` command when no migration is necessary
+        Test the `spare keys migrate` command when no migration is necessary
         """
 
         def mock_keychain_needs_migration() -> bool:
@@ -864,7 +864,7 @@ class TestKeysCommands:
 
     def test_migration_full(self, tmp_path, setup_legacy_keyringwrapper):
         """
-        Test the `chia keys migrate` command when a full migration is needed
+        Test the `spare keys migrate` command when a full migration is needed
         """
 
         legacy_keyring = KeyringWrapper.get_shared_instance().legacy_keyring

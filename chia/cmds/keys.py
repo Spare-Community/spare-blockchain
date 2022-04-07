@@ -11,7 +11,7 @@ def keys_cmd(ctx: click.Context):
 
     root_path: Path = ctx.obj["root_path"]
     if not root_path.is_dir():
-        raise RuntimeError("Please initialize (or migrate) your config directory with chia init")
+        raise RuntimeError("Please initialize (or migrate) your config directory with spare init")
 
 
 @keys_cmd.command("generate", short_help="Generates and adds a key to keychain")
@@ -32,7 +32,7 @@ def generate_cmd(ctx: click.Context):
     "--non-observer-derivation",
     "-d",
     help=(
-        "Show the first wallet address using non-observer derivation. Older Chia versions use "
+        "Show the first wallet address using non-observer derivation. Older Spare versions use "
         "non-observer derivation when generating wallet addresses."
     ),
     default=False,
@@ -255,7 +255,7 @@ def search_cmd(
     "--index", "-i", help="Index of the first wallet address to derive. Index 0 is the first wallet address.", default=0
 )
 @click.option("--count", "-n", help="Number of wallet addresses to derive, starting at index.", default=1)
-@click.option("--prefix", "-x", help="Address prefix (xch for mainnet, txch for testnet)", default=None, type=str)
+@click.option("--prefix", "-x", help="Address prefix (spare for mainnet, tspare for testnet)", default=None, type=str)
 @click.option(
     "--non-observer-derivation",
     "-d",

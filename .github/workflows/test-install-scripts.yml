@@ -192,7 +192,7 @@ jobs:
         INSTALL_PYTHON_VERSION: ${{ matrix.python-version }}
       run: sh install.sh -a
 
-    - name: Run chia --help
+    - name: Run spare --help
       run: |
         . ./activate
-        chia --help
+        spare --help

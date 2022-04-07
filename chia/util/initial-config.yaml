@@ -80,24 +80,24 @@ network_overrides: &network_overrides
       NETWORK_TYPE: 1
   config:
     mainnet:
-      address_prefix: "xch"
+      address_prefix: "spare"
       default_full_node_port: 8444
     testnet0:
-      address_prefix: "txch"
+      address_prefix: "tspare"
       default_full_node_port: 58444
     testnet1:
-      address_prefix: "txch"
+      address_prefix: "tspare"
     testnet2:
-      address_prefix: "txch"
+      address_prefix: "tspare"
     testnet3:
-      address_prefix: "txch"
+      address_prefix: "tspare"
     testnet4:
-      address_prefix: "txch"
+      address_prefix: "tspare"
     testnet7:
-      address_prefix: "txch"
+      address_prefix: "tspare"
       default_full_node_port: 58444
     testnet10:
-      address_prefix: "txch"
+      address_prefix: "tspare"
       default_full_node_port: 58444
 
 selected_network: &selected_network "mainnet"
@@ -138,7 +138,7 @@ seeder:
   other_peers_port: 8444
   # This will override the default full_node.peer_connect_timeout for the crawler full node
   peer_connect_timeout: 2
-  # Path to crawler DB. Defaults to $CHIA_ROOT/crawler.db
+  # Path to crawler DB. Defaults to $SPARE_ROOT/crawler.db
   crawler_db_path: "crawler.db"
   # Peers used for the initial run.
   bootstrap_peers:
@@ -210,7 +210,7 @@ harvester:
 
 pool:
   # Replace this with a real puzzle hash
-  # xch_target_address: txch102gkhhzs60grx7cfnpng5n6rjecr89r86l5s8xux2za8k820cxsq64ssdg
+  # spare_target_address: tspare102gkhhzs60grx7cfnpng5n6rjecr89r86l5s8xux2za8k820cxsq64ssdg
   logging: *logging
   network_overrides: *network_overrides
   selected_network: *selected_network
@@ -230,7 +230,7 @@ farmer:
   pool_public_keys: []
 
   # Replace this with a real puzzle hash
-  # xch_target_address: txch102gkhhzs60grx7cfnpng5n6rjecr89r86l5s8xux2za8k820cxsq64ssdg
+  # spare_target_address: tspare102gkhhzs60grx7cfnpng5n6rjecr89r86l5s8xux2za8k820cxsq64ssdg
 
   # If True, starts an RPC server at the following port
   start_rpc_server: True

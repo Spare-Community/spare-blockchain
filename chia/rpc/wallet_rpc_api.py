@@ -48,7 +48,7 @@ class WalletRpcApi:
     def __init__(self, wallet_node: WalletNode):
         assert wallet_node is not None
         self.service = wallet_node
-        self.service_name = "chia_wallet"
+        self.service_name = "spare_wallet"
         self.balance_cache: Dict[int, Any] = {}
 
     def get_routes(self) -> Dict[str, Callable]:
@@ -300,8 +300,8 @@ class WalletRpcApi:
             return False, False
 
         config: Dict = load_config(new_root, "config.yaml")
-        farmer_target = config["farmer"].get("xch_target_address")
-        pool_target = config["pool"].get("xch_target_address")
+        farmer_target = config["farmer"].get("spare_target_address")
+        pool_target = config["pool"].get("spare_target_address")
         found_farmer = False
         found_pool = False
         selected = config["selected_network"]

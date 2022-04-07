@@ -74,14 +74,14 @@ def check_keys(new_root: Path, keychain: Optional[Keychain] = None) -> None:
         keychain = Keychain()
     all_sks = keychain.get_all_private_keys()
     if len(all_sks) == 0:
-        print("No keys are present in the keychain. Generate them with 'chia keys generate'")
+        print("No keys are present in the keychain. Generate them with 'spare keys generate'")
         return None
 
     with lock_and_load_config(new_root, "config.yaml") as config:
         pool_child_pubkeys = [master_sk_to_pool_sk(sk).get_g1() for sk, _ in all_sks]
         all_targets = []
-        stop_searching_for_farmer = "xch_target_address" not in config["farmer"]
-        stop_searching_for_pool = "xch_target_address" not in config["pool"]
+        stop_searching_for_farmer = "spare_target_address" not in config["farmer"]
+        stop_searching_for_pool = "spare_target_address" not in config["pool"]
         number_of_ph_to_search = 50
         selected = config["selected_network"]
         prefix = config["network_overrides"]["config"][selected]["address_prefix"]
@@ -108,46 +108,46 @@ def check_keys(new_root: Path, keychain: Optional[Keychain] = None) -> None:
                 all_targets.append(
                     encode_puzzle_hash(create_puzzlehash_for_pk(_derive_path(intermediate_n, [i]).get_g1()), prefix)
                 )
-                if all_targets[-1] == config["farmer"].get("xch_target_address") or all_targets[-2] == config[
+                if all_targets[-1] == config["farmer"].get("spare_target_address") or all_targets[-2] == config[
                     "farmer"
-                ].get("xch_target_address"):
+                ].get("spare_target_address"):
                     stop_searching_for_farmer = True
-                if all_targets[-1] == config["pool"].get("xch_target_address") or all_targets[-2] == config["pool"].get(
-                    "xch_target_address"
+                if all_targets[-1] == config["pool"].get("spare_target_address") or all_targets[-2] == config["pool"].get(
+                    "spare_target_address"
                 ):
                     stop_searching_for_pool = True
 
         # Set the destinations, if necessary
         updated_target: bool = False
-        if "xch_target_address" not in config["farmer"]:
+        if "spare_target_address" not in config["farmer"]:
             print(
-                f"Setting the xch destination for the farmer reward (1/8 plus fees, solo and pooling)"
+                f"Setting the spare destination for the farmer reward (1/8 plus fees, solo and pooling)"
                 f" to {all_targets[0]}"
             )
-            config["farmer"]["xch_target_address"] = all_targets[0]
+            config["farmer"]["spare_target_address"] = all_targets[0]
             updated_target = True
-        elif config["farmer"]["xch_target_address"] not in all_targets:
+        elif config["farmer"]["spare_target_address"] not in all_targets:
             print(
                 f"WARNING: using a farmer address which we might not have the private"
                 f" keys for. We searched the first {number_of_ph_to_search} addresses. Consider overriding "
-                f"{config['farmer']['xch_target_address']} with {all_targets[0]}"
+                f"{config['farmer']['spare_target_address']} with {all_targets[0]}"
             )
 
         if "pool" not in config:
             config["pool"] = {}
-        if "xch_target_address" not in config["pool"]:
-            print(f"Setting the xch destination address for pool reward (7/8 for solo only) to {all_targets[0]}")
-            config["pool"]["xch_target_address"] = all_targets[0]
+        if "spare_target_address" not in config["pool"]:
+            print(f"Setting the spare destination address for pool reward (7/8 for solo only) to {all_targets[0]}")
+            config["pool"]["spare_target_address"] = all_targets[0]
             updated_target = True
-        elif config["pool"]["xch_target_address"] not in all_targets:
+        elif config["pool"]["spare_target_address"] not in all_targets:
             print(
                 f"WARNING: using a pool address which we might not have the private"
                 f" keys for. We searched the first {number_of_ph_to_search} addresses. Consider overriding "
-                f"{config['pool']['xch_target_address']} with {all_targets[0]}"
+                f"{config['pool']['spare_target_address']} with {all_targets[0]}"
             )
         if updated_target:
             print(
-                f"To change the XCH destination addresses, edit the `xch_target_address` entries in"
+                f"To change the SPARE destination addresses, edit the `spare_target_address` entries in"
                 f" {(new_root / 'config' / 'config.yaml').absolute()}."
             )
 
@@ -430,16 +430,16 @@ def chia_init(
     protected Keychain. When launching the daemon from the GUI, we want the GUI to
     handle unlocking the keychain.
     """
-    if os.environ.get("CHIA_ROOT", None) is not None:
+    if os.environ.get("SPARE_ROOT", None) is not None:
         print(
-            f"warning, your CHIA_ROOT is set to {os.environ['CHIA_ROOT']}. "
-            f"Please unset the environment variable and run chia init again\n"
+            f"warning, your SPARE_ROOT is set to {os.environ['SPARE_ROOT']}. "
+            f"Please unset the environment variable and run spare init again\n"
             f"or manually migrate config.yaml"
         )
 
     print(f"Chia directory {root_path}")
     if root_path.is_dir() and Path(root_path / "config" / "config.yaml").exists():
-        # This is reached if CHIA_ROOT is set, or if user has run chia init twice
+        # This is reached if SPARE_ROOT is set, or if user has run spare init twice
         # before a new update.
         if testnet:
             configure(
@@ -518,6 +518,6 @@ def chia_init(
             set_db_version(connection, 2)
 
     print("")
-    print("To see your keys, run 'chia keys show --show-mnemonic-seed'")
+    print("To see your keys, run 'spare keys show --show-mnemonic-seed'")
 
     return 0

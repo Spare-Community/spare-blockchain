@@ -57,7 +57,7 @@ async def create(args: dict, wallet_client: WalletRpcClient, fingerprint: int) -
     state = args["state"]
     prompt = not args.get("yes", False)
     fee = Decimal(args.get("fee", 0))
-    fee_mojos = uint64(int(fee * units["chia"]))
+    fee_mojos = uint64(int(fee * units["spare"]))
     target_puzzle_hash: Optional[bytes32]
     # Could use initial_pool_state_from_dict to simplify
     if state == "SELF_POOLING":
@@ -101,10 +101,10 @@ async def create(args: dict, wallet_client: WalletRpcClient, fingerprint: int) -
                 tx = await wallet_client.get_transaction(str(1), tx_record.name)
                 if len(tx.sent_to) > 0:
                     print(f"Transaction submitted to nodes: {tx.sent_to}")
-                    print(f"Do chia wallet get_transaction -f {fingerprint} -tx 0x{tx_record.name} to get status")
+                    print(f"Do spare wallet get_transaction -f {fingerprint} -tx 0x{tx_record.name} to get status")
                     return None
         except Exception as e:
-            print(f"Error creating plot NFT: {e}\n    Please start both farmer and wallet with:  chia start -r farmer")
+            print(f"Error creating plot NFT: {e}\n    Please start both farmer and wallet with:  spare start -r farmer")
         return
     print("Aborting.")
 
@@ -195,7 +195,7 @@ async def show(args: dict, wallet_client: WalletRpcClient, fingerprint: int) -> 
         if isinstance(e, aiohttp.ClientConnectorError):
             print(
                 f"Connection error. Check if farmer is running at {farmer_rpc_port}."
-                f" You can run the farmer by:\n    chia start farmer-only"
+                f" You can run the farmer by:\n    spare start farmer-only"
             )
         else:
             print(f"Exception from 'wallet' {e}")
@@ -259,7 +259,7 @@ async def get_login_link(launcher_id_str: str) -> None:
         if isinstance(e, aiohttp.ClientConnectorError):
             print(
                 f"Connection error. Check if farmer is running at {farmer_rpc_port}."
-                f" You can run the farmer by:\n    chia start farmer-only"
+                f" You can run the farmer by:\n    spare start farmer-only"
             )
         else:
             print(f"Exception from 'farmer' {e}")
@@ -287,7 +287,7 @@ async def submit_tx_with_confirmation(
                 tx = await wallet_client.get_transaction(str(1), tx_record.name)
                 if len(tx.sent_to) > 0:
                     print(f"Transaction submitted to nodes: {tx.sent_to}")
-                    print(f"Do chia wallet get_transaction -f {fingerprint} -tx 0x{tx_record.name} to get status")
+                    print(f"Do spare wallet get_transaction -f {fingerprint} -tx 0x{tx_record.name} to get status")
                     return None
         except Exception as e:
             print(f"Error performing operation on Plot NFT -f {fingerprint} wallet id: {wallet_id}: {e}")
@@ -300,7 +300,7 @@ async def join_pool(args: dict, wallet_client: WalletRpcClient, fingerprint: int
     enforce_https = config["full_node"]["selected_network"] == "mainnet"
     pool_url: str = args["pool_url"]
     fee = Decimal(args.get("fee", 0))
-    fee_mojos = uint64(int(fee * units["chia"]))
+    fee_mojos = uint64(int(fee * units["spare"]))
 
     if enforce_https and not pool_url.startswith("https://"):
         print(f"Pool URLs must be HTTPS on mainnet {pool_url}. Aborting.")
@@ -344,7 +344,7 @@ async def self_pool(args: dict, wallet_client: WalletRpcClient, fingerprint: int
     wallet_id = args.get("id", None)
     prompt = not args.get("yes", False)
     fee = Decimal(args.get("fee", 0))
-    fee_mojos = uint64(int(fee * units["chia"]))
+    fee_mojos = uint64(int(fee * units["spare"]))
 
     msg = f"Will start self-farming with Plot NFT on wallet id {wallet_id} fingerprint {fingerprint}."
     func = functools.partial(wallet_client.pw_self_pool, wallet_id, fee_mojos)
@@ -367,7 +367,7 @@ async def inspect_cmd(args: dict, wallet_client: WalletRpcClient, fingerprint: i
 async def claim_cmd(args: dict, wallet_client: WalletRpcClient, fingerprint: int) -> None:
     wallet_id = args.get("id", None)
     fee = Decimal(args.get("fee", 0))
-    fee_mojos = uint64(int(fee * units["chia"]))
+    fee_mojos = uint64(int(fee * units["spare"]))
     msg = f"\nWill claim rewards for wallet ID: {wallet_id}."
     func = functools.partial(
         wallet_client.pw_absorb_rewards,

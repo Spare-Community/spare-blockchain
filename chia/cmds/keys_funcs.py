@@ -28,7 +28,7 @@ def generate_and_print():
     mnemonic = generate_mnemonic()
     print("Generating private key. Mnemonic (24 secret words):")
     print(mnemonic)
-    print("Note that this key has not been added to the keychain. Run chia keys add")
+    print("Note that this key has not been added to the keychain. Run spare keys add")
     return mnemonic
 
 
@@ -291,7 +291,7 @@ def _search_derived(
         if search_address:
             # Generate a wallet address using the standard p2_delegated_puzzle_or_hidden_puzzle puzzle
             # TODO: consider generating addresses using other puzzles
-            address = encode_puzzle_hash(create_puzzlehash_for_pk(child_pk), "xch")
+            address = encode_puzzle_hash(create_puzzlehash_for_pk(child_pk), "spare")
 
         for term in remaining_search_terms:
             found_item: Any = None
