@@ -235,8 +235,8 @@ def create_all_ssl(
     private_ca_key_path = ca_dir / "private_ca.key"
     private_ca_crt_path = ca_dir / "private_ca.crt"
     chia_ca_crt, chia_ca_key = get_chia_ca_crt_key()
-    chia_ca_crt_path = ca_dir / "chia_ca.crt"
-    chia_ca_key_path = ca_dir / "chia_ca.key"
+    chia_ca_crt_path = ca_dir / "spare_ca.crt"
+    chia_ca_key_path = ca_dir / "spare_ca.key"
     write_ssl_cert_and_key(chia_ca_crt_path, chia_ca_crt, chia_ca_key_path, chia_ca_key)
 
     # If Private CA crt/key are passed-in, write them out

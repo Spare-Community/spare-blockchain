@@ -14,8 +14,8 @@ from cryptography.x509.oid import NameOID
 
 
 def get_chia_ca_crt_key() -> Tuple[Any, Any]:
-    crt = pkg_resources.resource_string(__name__, "chia_ca.crt")
-    key = pkg_resources.resource_string(__name__, "chia_ca.key")
+    crt = pkg_resources.resource_string(__name__, "spare_ca.crt")
+    key = pkg_resources.resource_string(__name__, "spare_ca.key")
     return crt, key
 
 
@@ -116,7 +116,7 @@ def make_ca_cert(cert_path: Path, key_path: Path):
 
 
 def main():
-    return make_ca_cert(Path("./chia_ca.crt"), Path("./chia_ca.key"))
+    return make_ca_cert(Path("./spare_ca.crt"), Path("./spare_ca.key"))
 
 
 if __name__ == "__main__":
